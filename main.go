@@ -3,6 +3,7 @@ package main
 import (
 	"RHF-go/chemical_system"
 	"fmt"
+	"gonum.org/v1/gonum/mat"
 )
 
 func main() {
@@ -11,5 +12,6 @@ func main() {
 	o1 := chemical_system.NewAtom("O", [3]float64{0.0, 0.0, 0.0})
 	h2o := chemical_system.NewMolecule([]*chemical_system.Atom{h1, h2, o1}, &chemical_system.STO3G)
 
-	fmt.Print(*h2o)
+	S := h2o.GetS()
+	fmt.Print(mat.Formatted(S))
 }
