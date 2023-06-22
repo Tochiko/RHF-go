@@ -14,6 +14,7 @@ func NewMolecule(atoms []*Atom, nameBs *string) *Molecule {
 		atoms:       atoms,
 		nElectrons:  0,
 		nVElectrons: 0,
+		elements:    make(map[int8]*AtomicData),
 	}
 	for _, atom := range atoms {
 		_, ok := result.elements[atom.data.atnum]

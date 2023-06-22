@@ -21,7 +21,10 @@ type BasisSet struct {
 }
 
 func NewBasisSet(name *string, elements map[int8]*AtomicData) *BasisSet {
-	result := &BasisSet{name: name}
+	result := &BasisSet{
+		name:  name,
+		basis: make(map[string][]*Contracted3Gaussian),
+	}
 
 	raw, err := os.ReadFile("./" + *name + ".json")
 	if err != nil {
@@ -36,21 +39,24 @@ func NewBasisSet(name *string, elements map[int8]*AtomicData) *BasisSet {
 	for _, element := range elements {
 		eData := data["elements"].(map[string]interface{})
 		aData := eData[strconv.Itoa(int(element.atnum))].(map[string]interface{})
-		bData := aData["electron_shells"].([]*ElectronShell)
-		for _, bd := range bData {
-			rawExps := bd.exponents
+		//bData := make([]*ElectronShell, 1)
+		bData := aData["electron_shells"].([]interface{})
+		for _, bdi := range bData {
+			bd := bdi.(map[string]interface{})
+			rawExps := bd["exponents"].([]interface{})
 			exps := make([]float64, 3)
 			for i := 0; i < 3; i++ {
-				exps[i] = float64(rawExps[i])
+				exps[i], _ = strconv.ParseFloat(rawExps[i].(string), 32)
 			}
-			for i, angmom := range bd.angular_momentum {
+			rawCoefsList := bd["coefficients"].([]interface{})
+			for i, angmom := range bd["angular_momentum"].([]interface{}) {
 				coefs := make([]float64, 3)
-				rawCoefs := bd.coefficients[i]
-				for i := 0; i < 3; i++ {
-					coefs[i] = float64(rawCoefs[i])
+				rawCoefs := rawCoefsList[i].([]interface{})
+				for j := 0; j < 3; j++ {
+					coefs[j], _ = strconv.ParseFloat(rawCoefs[j].(string), 32)
 				}
 
-				for _, ikm := range cartesianPower[angmom] {
+				for _, ikm := range cartesianPower[int8(angmom.(float64))] {
 					bFunction := NewContracted3Gaussian([3]float64(coefs), [3]float64(exps), shift, ikm, element)
 					norm := bFunction.S(bFunction)
 					normCoefs := make([]float64, 3)
@@ -71,9 +77,9 @@ func (bs *BasisSet) getBasisFunctionsFor(atom *Atom) []*Contracted3Gaussian {
 }
 
 type ElectronShell struct {
-	function_type    string
-	region           string
-	angular_momentum []int8
-	exponents        [3]float64
-	coefficients     [][3]float64
+	function_type    interface{}
+	region           interface{}
+	angular_momentum []interface{}
+	exponents        []interface{}
+	coefficients     []interface{}
 }
