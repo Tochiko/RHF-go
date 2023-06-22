@@ -48,3 +48,16 @@ func (cg *Contracted3Gaussian) Copy() *Contracted3Gaussian {
 func (cg *Contracted3Gaussian) SetLocation(location [3]float64) {
 	cg.location = location
 }
+
+func (cg *Contracted3Gaussian) S(other *Contracted3Gaussian) float64 {
+	result := 0.
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 3; j++ {
+			result += integrals.S_ij(cg.ijk[0], other.ijk[0], cg.exps[i], other.exps[j], cg.location[0], other.location[0]) *
+				integrals.S_ij(cg.ijk[1], other.ijk[1], cg.exps[i], other.exps[j], cg.location[1], other.location[1]) *
+				integrals.S_ij(cg.ijk[2], other.ijk[2], cg.exps[i], other.exps[j], cg.location[2], other.location[2]) *
+				cg.coefs[i] * other.coefs[j] * cg.normconst[i] * other.normconst[j]
+		}
+	}
+	return result
+}

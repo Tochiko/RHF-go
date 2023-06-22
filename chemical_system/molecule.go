@@ -4,8 +4,8 @@ type Molecule struct {
 	atoms       []*Atom
 	basisSet    *BasisSet
 	aoBasis     []*Contracted3Gaussian
-	nElectrons  int8
-	nVElectrons int8
+	nElectrons  int32
+	nVElectrons int32
 }
 
 func NewMolecule(atoms []*Atom, nameBs *string) *Molecule {
@@ -19,10 +19,10 @@ func NewMolecule(atoms []*Atom, nameBs *string) *Molecule {
 	return result
 }
 
-func (m *Molecule) GetCountElectrons() (int8, int8) {
+func (m *Molecule) GetCountElectrons() (int32, int32) {
 	for _, atom := range m.atoms {
-		m.nElectrons += atom.data.atnum
-		m.nVElectrons += atom.data.velectrons
+		m.nElectrons += int32(atom.data.atnum)
+		m.nVElectrons += int32(atom.data.velectrons)
 	}
 	return m.nElectrons, m.nVElectrons
 }
