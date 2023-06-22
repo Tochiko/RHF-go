@@ -2,6 +2,7 @@ package chemical_system
 
 type Molecule struct {
 	atoms       []*Atom
+	elements    map[int8]*AtomicData
 	basisSet    *BasisSet
 	aoBasis     []*Contracted3Gaussian
 	nElectrons  int32
@@ -14,7 +15,14 @@ func NewMolecule(atoms []*Atom, nameBs *string) *Molecule {
 		nElectrons:  0,
 		nVElectrons: 0,
 	}
-	result.basisSet = NewBasisSet(nameBs)
+	for _, atom := range atoms {
+		_, ok := result.elements[atom.data.atnum]
+		if !ok {
+			result.elements[atom.data.atnum] = atom.data
+		}
+
+	}
+	result.basisSet = NewBasisSet(nameBs, result.elements)
 	result.initialize()
 	return result
 }
