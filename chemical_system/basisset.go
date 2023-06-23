@@ -30,41 +30,24 @@ func NewBasisSet(name *string, elements map[int8]*AtomicData) *BasisSet {
 	if err != nil {
 		panic(err)
 	}
-	data := map[string]interface{}{}
-	err = json.Unmarshal(raw, &data)
+	rBasisSet := &RawBasisSet{}
+	err = json.Unmarshal(raw, rBasisSet)
 	if err != nil {
 		panic(err)
 	}
 	shift := [3]float64{0., 0., 0.}
 	for _, element := range elements {
-		eData := data["elements"].(map[string]interface{})
-		aData := eData[strconv.Itoa(int(element.atnum))].(map[string]interface{})
-		//bData := make([]*ElectronShell, 1)
-		bData := aData["electron_shells"].([]interface{})
-		for _, bdi := range bData {
-			bd := bdi.(map[string]interface{})
-			rawExps := bd["exponents"].([]interface{})
-			exps := make([]float64, 3)
-			for i := 0; i < 3; i++ {
-				exps[i], _ = strconv.ParseFloat(rawExps[i].(string), 32)
-			}
-			rawCoefsList := bd["coefficients"].([]interface{})
-			for i, angmom := range bd["angular_momentum"].([]interface{}) {
-				coefs := make([]float64, 3)
-				rawCoefs := rawCoefsList[i].([]interface{})
-				for j := 0; j < 3; j++ {
-					coefs[j], _ = strconv.ParseFloat(rawCoefs[j].(string), 32)
-				}
-
-				for _, ikm := range cartesianPower[int8(angmom.(float64))] {
-					bFunction := NewContracted3Gaussian([3]float64(coefs), [3]float64(exps), shift, ikm, element)
-					norm := bFunction.S(bFunction)
+		for _, eShell := range rBasisSet.EContext[strconv.Itoa(int(element.atnum))].ElectronShells {
+			for i, angmom := range eShell.AMoms {
+				for _, ikm := range cartesianPower[angmom] {
+					bFunc := NewContracted3Gaussian(eShell.Coefs[i], eShell.Exps, shift, ikm, element)
+					norm := bFunc.S(bFunc)
 					normCoefs := make([]float64, 3)
-					for i, coef := range bFunction.GetCoefs() {
+					for i, coef := range bFunc.GetCoefs() {
 						normCoefs[i] = coef * math.Sqrt(norm)
 					}
-					bFunction.SetCoefs([3]float64(normCoefs))
-					result.basis[element.symbol] = append(result.basis[element.symbol], bFunction)
+					bFunc.SetCoefs([3]float64(normCoefs))
+					result.basis[element.symbol] = append(result.basis[element.symbol], bFunc)
 				}
 			}
 		}
@@ -76,10 +59,18 @@ func (bs *BasisSet) getBasisFunctionsFor(atom *Atom) []*Contracted3Gaussian {
 	return bs.basis[atom.data.symbol]
 }
 
-type ElectronShell struct {
-	function_type    interface{}
-	region           interface{}
-	angular_momentum []interface{}
-	exponents        []interface{}
-	coefficients     []interface{}
+type RawBasisSet struct {
+	EContext map[string]*ElementContext `json:"elements"`
 }
+
+type ElementContext struct {
+	ElectronShells []*ElectronShell `json:"electron_shells"`
+}
+
+type ElectronShell struct {
+	AMoms []int8       `json:"angular_momentum"`
+	Exps  [3]float64   `json:"exponents"`
+	Coefs [][3]float64 `json:"coefficients"`
+}
+
+type StringToFloat float64

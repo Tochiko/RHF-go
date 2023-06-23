@@ -10,6 +10,7 @@ type Molecule struct {
 	nElectrons      int32
 	nVElectrons     int32
 	nBasisFunctions int
+	S               *mat.Dense
 }
 
 func NewMolecule(atoms []*Atom, nameBs *string) *Molecule {
@@ -52,16 +53,16 @@ func (m *Molecule) initialize() {
 }
 
 func (m *Molecule) GetS() *mat.Dense {
-	result := mat.NewDense(m.nBasisFunctions, m.nBasisFunctions, nil)
+	m.S = mat.NewDense(m.nBasisFunctions, m.nBasisFunctions, nil)
 	for i := 0; i < m.nBasisFunctions; i++ {
 		for j := i; j < m.nBasisFunctions; j++ {
 			if i == j {
-				result.Set(i, j, 1.)
+				m.S.Set(i, j, 1.)
 				continue
 			}
-			result.Set(i, j, m.aoBasis[i].S(m.aoBasis[j]))
-			result.Set(j, i, result.At(i, j))
+			m.S.Set(i, j, m.aoBasis[i].S(m.aoBasis[j]))
+			m.S.Set(j, i, m.S.At(i, j))
 		}
 	}
-	return result
+	return m.S
 }
