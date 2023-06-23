@@ -6,21 +6,23 @@ import (
 )
 
 type Contracted3Gaussian struct {
+	SeqNum    int
 	coefs     [3]float64
 	normconst [3]float64
 	exps      [3]float64
 	shift     [3]float64
 	ijk       [3]int8
-	atom      *AtomicData
+	angMom    int8
+	atom      *Atom
 }
 
-func NewContracted3Gaussian(coefs, exps, shift [3]float64, ijk [3]int8, atom *AtomicData) *Contracted3Gaussian {
+func NewContracted3Gaussian(coefs, exps, shift [3]float64, ijk [3]int8, oType int8) *Contracted3Gaussian {
 	result := &Contracted3Gaussian{
-		coefs: coefs,
-		exps:  exps,
-		shift: shift,
-		ijk:   ijk,
-		atom:  atom,
+		coefs:  coefs,
+		exps:   exps,
+		shift:  shift,
+		ijk:    ijk,
+		angMom: oType,
 	}
 	result.normalize()
 	return result
@@ -45,8 +47,13 @@ func (cg *Contracted3Gaussian) Copy() *Contracted3Gaussian {
 		normconst: cg.normconst,
 	}
 }
-func (cg *Contracted3Gaussian) SetLocation(location [3]float64) {
-	cg.shift = location
+func (cg *Contracted3Gaussian) SetSeqNum(seqNum int) {
+	cg.SeqNum = seqNum
+}
+
+func (cg *Contracted3Gaussian) SetAtom(atom *Atom) {
+	cg.atom = atom
+	cg.shift = atom.coord
 }
 
 func (cg *Contracted3Gaussian) SetCoefs(coefs [3]float64) {

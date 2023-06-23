@@ -40,7 +40,7 @@ func NewBasisSet(name *string, elements map[int8]*AtomicData) *BasisSet {
 		for _, eShell := range rBasisSet.EContext[strconv.Itoa(int(element.atnum))].ElectronShells {
 			for i, angmom := range eShell.AMoms {
 				for _, ikm := range cartesianPower[angmom] {
-					bFunc := NewContracted3Gaussian(eShell.Coefs[i], eShell.Exps, shift, ikm, element)
+					bFunc := NewContracted3Gaussian(eShell.Coefs[i], eShell.Exps, shift, ikm, angmom)
 					norm := bFunc.S(bFunc)
 					normCoefs := make([]float64, 3)
 					for i, coef := range bFunc.GetCoefs() {
