@@ -7,6 +7,13 @@ type Atom struct {
 	coord [3]float64
 }
 
+type AtomicData struct {
+	symbol     string
+	atnum      int8
+	period     int8
+	velectrons int8
+}
+
 func NewAtom(symbol string, coord [3]float64) *Atom {
 	result := &Atom{
 		data: PSE_BY_SYMBOL[symbol],
