@@ -43,7 +43,7 @@ func (m *Molecule) GetCountElectrons() (int32, int32) {
 }
 
 func (m *Molecule) initialize() {
-	seqNum := 1
+	seqNum := 0
 	for _, atom := range m.atoms {
 		bFunctions := m.basisSet.getBasisFunctionsFor(atom)
 		for _, bf := range bFunctions {
@@ -67,13 +67,8 @@ func (m *Molecule) GetS() *mat.Dense {
 			}
 			bfi := m.aoBasis[i]
 			bfj := m.aoBasis[j]
-			if bfi.atom == bfj.atom && bfi.angMom != bfj.angMom {
-				m.S.Set(i, j, 0.)
-				m.S.Set(j, i, 0.)
-				continue
-			}
 
-			m.S.Set(i, j, bfi.S(bfj))
+			m.S.Set(i, j, bfi.S(bfj)) // i, j are exactly the SeqNum of the basis functions
 			m.S.Set(j, i, m.S.At(i, j))
 		}
 	}

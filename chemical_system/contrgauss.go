@@ -45,6 +45,7 @@ func (cg *Contracted3Gaussian) Copy() *Contracted3Gaussian {
 		ijk:       cg.ijk,
 		atom:      cg.atom,
 		normconst: cg.normconst,
+		angMom:    cg.angMom,
 	}
 }
 func (cg *Contracted3Gaussian) SetSeqNum(seqNum int) {

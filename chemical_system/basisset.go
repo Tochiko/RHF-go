@@ -43,8 +43,8 @@ func NewBasisSet(name *string, elements map[int8]*AtomicData) *BasisSet {
 					bFunc := NewContracted3Gaussian(eShell.Coefs[i], eShell.Exps, shift, ikm, angmom)
 					norm := bFunc.S(bFunc)
 					normCoefs := make([]float64, 3)
-					for i, coef := range bFunc.GetCoefs() {
-						normCoefs[i] = coef * math.Sqrt(norm)
+					for j, coef := range bFunc.GetCoefs() {
+						normCoefs[j] = coef * math.Sqrt(norm)
 					}
 					bFunc.SetCoefs([3]float64(normCoefs))
 					result.basis[element.symbol] = append(result.basis[element.symbol], bFunc)
