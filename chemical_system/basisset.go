@@ -7,8 +7,11 @@ import (
 	"strconv"
 )
 
-var STO3G = "sto-3g"
-var VSTO3G = "vsto-3g"
+var BASIS_SETS = map[string]string{
+	"sto-3g":  "sto-3g",
+	"vsto-3g": "vsto-3g",
+}
+
 var cartesianPower = map[int8][][3]int8{
 	0: {{0, 0, 0}},
 	1: {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}},
