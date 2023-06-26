@@ -1,2 +1,5 @@
 gonum.org/v1/gonum v0.13.0 h1:a0T3bh+7fhRyqeNbiC3qVHYmkiQgit3wnNan/2c0HMM=
 gonum.org/v1/gonum v0.13.0/go.mod h1:/WPYRckkfWrhWefxyYTfrTtQR0KH4iyHNuzxqXAKyAU=
+scientificgo.org/special v0.0.0 h1:P6WJkECo6tgtvZAEfNXl+KEB9ReAatjKAeX8U07mjSc=
+scientificgo.org/special v0.0.0/go.mod h1:LoGVh9tS431RLTJo7gFlYDKFWq44cEb7QqL+M0EKtZU=
+scientificgo.org/testutil v0.0.0/go.mod h1:Go6R4b+9YkFocMo3H3vNQ7tjbrX9Rc12wal7NZjvPXg=
