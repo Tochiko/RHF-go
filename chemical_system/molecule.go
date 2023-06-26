@@ -2,6 +2,9 @@ package chemical_system
 
 import (
 	"gonum.org/v1/gonum/mat"
+	"os"
+	"strconv"
+	"strings"
 )
 
 type Molecule struct {
@@ -12,7 +15,7 @@ type Molecule struct {
 	nElectrons      int32
 	nVElectrons     int32
 	nBasisFunctions int
-	S               *mat.Dense
+	s               *mat.Dense
 }
 
 func NewMolecule(atoms []*Atom, nameBs *string) *Molecule {
@@ -32,6 +35,35 @@ func NewMolecule(atoms []*Atom, nameBs *string) *Molecule {
 	result.basisSet = NewBasisSet(nameBs, result.elements)
 	result.initialize()
 	return result
+}
+
+func NewMoleculeFromXYZ(path string, nameBs *string) *Molecule {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+	raw := string(data)
+	lines := strings.Split(strings.TrimSuffix(raw, "\n"), "\n")
+	if len(lines) == 0 {
+		return nil
+	}
+	countAtoms, err := strconv.Atoi(lines[0])
+	if err != nil {
+		panic(err)
+	}
+	atoms := make([]*Atom, countAtoms)
+	for j, line := range lines[2:] { //First two lines from xyz-file are atom-number and a blank line
+		properties := strings.Fields(line)
+		var coords [3]float64
+		for i, coord := range properties[1:] {
+			coords[i], err = strconv.ParseFloat(coord, 64)
+			if err != nil {
+				panic(err)
+			}
+		}
+		atoms[j] = NewAtom(properties[0], coords)
+	}
+	return NewMolecule(atoms, nameBs)
 }
 
 func (m *Molecule) GetCountElectrons() (int32, int32) {
@@ -57,20 +89,24 @@ func (m *Molecule) initialize() {
 	m.nBasisFunctions = len(m.aoBasis)
 }
 
-func (m *Molecule) GetS() *mat.Dense {
-	m.S = mat.NewDense(m.nBasisFunctions, m.nBasisFunctions, nil)
+func (m *Molecule) CalcS() *mat.Dense {
+	m.s = mat.NewDense(m.nBasisFunctions, m.nBasisFunctions, nil)
 	for i := 0; i < m.nBasisFunctions; i++ {
 		for j := i; j < m.nBasisFunctions; j++ {
 			if i == j {
-				m.S.Set(i, j, 1.)
+				m.s.Set(i, j, 1.)
 				continue
 			}
 			bfi := m.aoBasis[i]
 			bfj := m.aoBasis[j]
 
-			m.S.Set(i, j, bfi.S(bfj)) // i, j are exactly the SeqNum of the basis functions
-			m.S.Set(j, i, m.S.At(i, j))
+			m.s.Set(i, j, bfi.S(bfj)) // i, j are exactly the SeqNum of the basis functions
+			m.s.Set(j, i, m.s.At(i, j))
 		}
 	}
-	return m.S
+	return m.s
+}
+
+func (m *Molecule) GetS() *mat.Dense {
+	return m.s
 }
