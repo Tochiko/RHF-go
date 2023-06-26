@@ -2,6 +2,7 @@ package main
 
 import (
 	"RHF-go/chemical_system"
+	"RHF-go/util"
 	"errors"
 	"fmt"
 	"gonum.org/v1/gonum/mat"
@@ -16,11 +17,12 @@ func main() {
 	}
 	basisset := args[arglen-2] // basisset should every time be the prae-last argument
 	if _, ok := chemical_system.BASIS_SETS[basisset]; ok {
+		timeLogger := util.NewTimeLogger()
 		xyzFilePath := args[arglen-1] // path to xyz file should every time be the last argumetn
 
-		mol := chemical_system.NewMoleculeFromXYZ(xyzFilePath, &basisset)
-		mol.CalcS()
-		fmt.Print(mat.Formatted(mol.GetS()))
+		mol := chemical_system.NewMoleculeFromXYZ(xyzFilePath, &basisset, timeLogger)
+		S := mol.CalcS()
+		fmt.Print(mat.Formatted(S))
 	}
 }
 

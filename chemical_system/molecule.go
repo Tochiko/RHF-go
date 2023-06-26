@@ -1,6 +1,7 @@
 package chemical_system
 
 import (
+	"RHF-go/util"
 	"gonum.org/v1/gonum/mat"
 	"os"
 	"strconv"
@@ -8,6 +9,7 @@ import (
 )
 
 type Molecule struct {
+	logger          *util.TimeLogger
 	atoms           []*Atom
 	elements        map[int8]*AtomicData
 	basisSet        *BasisSet
@@ -18,12 +20,13 @@ type Molecule struct {
 	s               *mat.Dense
 }
 
-func NewMolecule(atoms []*Atom, nameBs *string) *Molecule {
+func NewMolecule(atoms []*Atom, nameBs *string, logger *util.TimeLogger) *Molecule {
 	result := &Molecule{
 		atoms:       atoms,
 		nElectrons:  0,
 		nVElectrons: 0,
 		elements:    make(map[int8]*AtomicData),
+		logger:      logger,
 	}
 	for _, atom := range atoms {
 		_, ok := result.elements[atom.data.atnum]
@@ -37,7 +40,7 @@ func NewMolecule(atoms []*Atom, nameBs *string) *Molecule {
 	return result
 }
 
-func NewMoleculeFromXYZ(path string, nameBs *string) *Molecule {
+func NewMoleculeFromXYZ(path string, nameBs *string, logger *util.TimeLogger) *Molecule {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		panic(err)
@@ -63,7 +66,7 @@ func NewMoleculeFromXYZ(path string, nameBs *string) *Molecule {
 		}
 		atoms[j] = NewAtom(properties[0], coords)
 	}
-	return NewMolecule(atoms, nameBs)
+	return NewMolecule(atoms, nameBs, logger)
 }
 
 func (m *Molecule) GetCountElectrons() (int32, int32) {
@@ -90,6 +93,7 @@ func (m *Molecule) initialize() {
 }
 
 func (m *Molecule) CalcS() *mat.Dense {
+	defer m.logger.LogTimeAfterCompletion("Molecule.CalcS")()
 	m.s = mat.NewDense(m.nBasisFunctions, m.nBasisFunctions, nil)
 	for i := 0; i < m.nBasisFunctions; i++ {
 		for j := i; j < m.nBasisFunctions; j++ {
