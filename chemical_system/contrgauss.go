@@ -77,3 +77,22 @@ func (cg *Contracted3Gaussian) S(other *Contracted3Gaussian) float64 {
 	}
 	return result
 }
+
+func (cg *Contracted3Gaussian) T(other *Contracted3Gaussian) float64 {
+	result := 0.
+	indices := [5]int8{0, 1, 2, 0, 1}
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 3; j++ {
+			for k := 0; k < 3; k++ {
+				ind := indices[i]
+				ind_p1 := indices[i+1]
+				ind_p2 := indices[i+2]
+				result += integrals.T_ij(cg.ijk[ind], other.ijk[ind], cg.exps[j], other.exps[k], cg.shift[ind], other.shift[ind]) *
+					integrals.S_ij(cg.ijk[ind_p1], other.ijk[ind_p1], cg.exps[j], other.exps[k], cg.shift[ind_p1], other.shift[ind_p1]) *
+					integrals.S_ij(cg.ijk[ind_p2], other.ijk[ind_p2], cg.exps[j], other.exps[k], cg.shift[ind_p2], other.shift[ind_p2]) *
+					cg.coefs[j] * other.coefs[k] * cg.normconst[j] * other.normconst[k]
+			}
+		}
+	}
+	return result
+}

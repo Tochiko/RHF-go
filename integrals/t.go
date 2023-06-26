@@ -2,7 +2,7 @@ package integrals
 
 import "math"
 
-func t_ij(i, j int8, alpha, beta, ax, bx float64) float64 {
+func T_ij(i, j int8, alpha, beta, ax, bx float64) float64 {
 	ab_diff := ax - bx
 	ab_diff_squared := math.Pow(ab_diff, 2)
 	ab_sum := alpha + beta
@@ -16,7 +16,7 @@ func t_ij(i, j int8, alpha, beta, ax, bx float64) float64 {
 	if i == 0 && j == 1 {
 		return -SQRT_PI*ab_diff*alpha*beta*(3+alpha*(ab_diff_ab_product-3*alpha-3*beta)/math.Pow(ab_sum, 2))*math.Exp(ab_diff_sq_ab_product_per_sum)/math.Pow(ab_sum, 3/2) + 3*SQRT_PI*ab_diff*alpha*beta*math.Exp(ab_diff_sq_ab_product_per_sum)/math.Pow(ab_sum, 3/2)
 	}
-	if i == 1 && j == 1 {
+	if i == 1 && j == 0 {
 		return -SQRT_PI*ab_diff*math.Pow(beta, 2)*(-1+alpha*(-ab_diff_ab_product+3*alpha+3*beta)/math.Pow(ab_sum, 2))*math.Exp(ab_diff_sq_ab_product_per_sum)/math.Pow(ab_sum, 3/2) - SQRT_PI*ab_diff*math.Pow(beta, 2)*math.Exp(ab_diff_sq_ab_product_per_sum)/math.Pow(ab_sum, 3/2)
 	}
 	if i == 1 && j == 1 {

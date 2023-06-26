@@ -23,6 +23,9 @@ func main() {
 		mol := chemical_system.NewMoleculeFromXYZ(xyzFilePath, &basisset, timeLogger)
 		S := mol.CalcS()
 		fmt.Print(mat.Formatted(S))
+		fmt.Print("\n", "-----------------------------", "\n")
+		T := mol.CalcT()
+		fmt.Print(mat.Formatted(T))
 	}
 }
 

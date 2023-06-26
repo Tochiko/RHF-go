@@ -18,6 +18,7 @@ type Molecule struct {
 	nVElectrons     int32
 	nBasisFunctions int
 	s               *mat.Dense
+	t               *mat.Dense
 }
 
 func NewMolecule(atoms []*Atom, nameBs *string, logger *util.TimeLogger) *Molecule {
@@ -113,4 +114,24 @@ func (m *Molecule) CalcS() *mat.Dense {
 
 func (m *Molecule) GetS() *mat.Dense {
 	return m.s
+}
+
+func (m *Molecule) CalcT() *mat.Dense {
+	defer m.logger.LogTimeAfterCompletion("Molecule.CalcT")()
+	m.t = mat.NewDense(m.nBasisFunctions, m.nBasisFunctions, nil)
+	for i := 0; i < m.nBasisFunctions; i++ {
+		for j := i; j < m.nBasisFunctions; j++ {
+
+			bfi := m.aoBasis[i]
+			bfj := m.aoBasis[j]
+
+			m.t.Set(i, j, bfi.T(bfj)) // i, j are exactly the SeqNum of the basis functions
+			m.t.Set(j, i, m.t.At(i, j))
+		}
+	}
+	return m.t
+}
+
+func (m *Molecule) GetT() *mat.Dense {
+	return m.t
 }
