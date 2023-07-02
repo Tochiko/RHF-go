@@ -28,6 +28,9 @@ func main() {
 		fmt.Print("\n", "-----------------------------", "\n")
 		_ = mol.CalcVNuc()
 		//fmt.Print(mat.Formatted(VNuc))
+		fmt.Print("\n", "-----------------------------", "\n")
+		_ = mol.CalcVElec()
+
 	}
 
 	/*args := os.Args

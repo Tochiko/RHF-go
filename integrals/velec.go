@@ -10,7 +10,7 @@ var Pi5_2 = math.Pow(PI, 5/2)
 func VElecIJ(ii, jj, kk, ll, mm, nn, oo, pp, qq, rr, ss, tt int8, alpha, beta, gamma, delta float64, Aa, Bb, Cc, Dd [3]float64) float64 {
 	p := alpha + beta
 	q := gamma + delta
-	rho := p * q / (p + q)
+	//rho := p * q / (p + q)
 
 	A := mat.NewVecDense(3, Aa[:])
 	B := mat.NewVecDense(3, Bb[:])
@@ -43,7 +43,7 @@ func VElecIJ(ii, jj, kk, ll, mm, nn, oo, pp, qq, rr, ss, tt int8, alpha, beta, g
 
 	PQ := mat.NewVecDense(3, make([]float64, 3))
 	PQ.SubVec(P, Q)
-	r_PQ := mat.Dot(PQ, PQ)
+	//r_PQ := mat.Dot(PQ, PQ)
 
 	A_x, A_y, A_z := A.AtVec(0), A.AtVec(1), A.AtVec(2)
 	B_x, B_y, B_z := B.AtVec(0), B.AtVec(1), B.AtVec(2)
@@ -59,5 +59,6 @@ func VElecIJ(ii, jj, kk, ll, mm, nn, oo, pp, qq, rr, ss, tt int8, alpha, beta, g
 	if ii == 0 && jj == 0 && kk == 0 && ll == 0 && mm == 0 && nn == 0 && oo == 0 && pp == 0 && qq == 0 && rr == 0 && ss == 1 && tt == 0 {
 		return (1 / 2) * (-2*Pi5_2*delta*gamma*(-2*C_y+2*D_y)*math.Exp(-alpha*beta*r_AB/p-delta*gamma*r_CD/q)*boys(0, (math.Pow((p*(C_x*gamma+D_x*delta)-q*(A_x*alpha+B_x*beta)), 2)+math.Pow((p*(C_y*gamma+D_y*delta)-q*(A_y*alpha+B_y*beta)), 2)+math.Pow((p*(C_z*gamma+D_z*delta)-q*(A_z*alpha+B_z*beta)), 2))/(p*q*(p+q)))/(p*math.Pow(q, 2)*math.Sqrt(p+q)) - 4*Pi5_2*delta*(p*(C_y*gamma+D_y*delta)-q*(A_y*alpha+B_y*beta))*math.Exp(-alpha*beta*r_AB/p-delta*gamma*r_CD/q)*boys(1, (math.Pow((p*(C_x*gamma+D_x*delta)-q*(A_x*alpha+B_x*beta)), 2)+math.Pow((p*(C_y*gamma+D_y*delta)-q*(A_y*alpha+B_y*beta)), 2)+math.Pow((p*(C_z*gamma+D_z*delta)-q*(A_z*alpha+B_z*beta)), 2))/(p*q*(p+q)))/(p*math.Pow(q, 2)*math.Pow((p+q), 3/2))) / delta
 	}
-	panic("not implemented")
+	return 0. // todo: implement the missing cases
+	//panic("not implemented")
 }

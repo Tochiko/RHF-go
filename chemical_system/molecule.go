@@ -3,6 +3,7 @@ package chemical_system
 import (
 	"RHF-go/util"
 	"gonum.org/v1/gonum/mat"
+	"gorgonia.org/tensor"
 	"os"
 	"strconv"
 	"strings"
@@ -20,6 +21,7 @@ type Molecule struct {
 	s               *mat.Dense
 	t               *mat.Dense
 	vnuc            *mat.Dense
+	velec           *tensor.Dense
 }
 
 func NewMolecule(atoms []*Atom, nameBs *string, logger *util.TimeLogger) *Molecule {
@@ -159,4 +161,26 @@ func (m *Molecule) calcVNucIJ(i, j int) float64 {
 
 func (m *Molecule) GetVNuc() *mat.Dense {
 	return m.vnuc
+}
+
+func (m *Molecule) CalcVElec() *tensor.Dense {
+	defer m.logger.LogTimeAfterCompletion("Molecule.CalcVElec()")()
+	m.velec = tensor.NewDense(tensor.Float64, []int{m.nBasisFunctions, m.nBasisFunctions, m.nBasisFunctions, m.nBasisFunctions})
+	for i := 0; i < m.nBasisFunctions; i++ {
+		for j := 0; j < m.nBasisFunctions; j++ {
+			for k := 0; k < m.nBasisFunctions; k++ {
+				for l := 0; l < m.nBasisFunctions; l++ {
+					err := m.velec.SetAt(m.aoBasis[i].VElec(m.aoBasis[j], m.aoBasis[k], m.aoBasis[l]), i, j, k, l)
+					if err != nil {
+						panic(err)
+					}
+				}
+			}
+		}
+	}
+	return m.velec
+}
+
+func (m *Molecule) GetVelect() *tensor.Dense {
+	return m.velec
 }
