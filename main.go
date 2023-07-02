@@ -5,7 +5,6 @@ import (
 	"RHF-go/util"
 	"errors"
 	"fmt"
-	"gonum.org/v1/gonum/mat"
 	"os"
 )
 
@@ -21,14 +20,14 @@ func main() {
 		xyzFilePath := args[arglen-1] // path to xyz file should every time be the last argumetn
 
 		mol := chemical_system.NewMoleculeFromXYZ(xyzFilePath, &basisset, timeLogger)
-		S := mol.CalcS()
-		fmt.Print(mat.Formatted(S))
+		_ = mol.CalcS()
+		//fmt.Print(mat.Formatted(S))
 		fmt.Print("\n", "-----------------------------", "\n")
-		T := mol.CalcT()
-		fmt.Print(mat.Formatted(T))
+		_ = mol.CalcT()
+		//fmt.Print(mat.Formatted(T))
 		fmt.Print("\n", "-----------------------------", "\n")
-		VNuc := mol.CalcVNuc()
-		fmt.Print(mat.Formatted(VNuc))
+		_ = mol.CalcVNuc()
+		//fmt.Print(mat.Formatted(VNuc))
 	}
 
 	/*args := os.Args

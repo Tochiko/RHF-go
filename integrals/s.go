@@ -5,7 +5,7 @@ import "math"
 var PI = math.Pi
 var SQRT_PI = math.Sqrt(math.Pi)
 
-func S_ij(i, j int8, alpha, beta, ax, bx float64) float64 {
+func SIJ(i, j int8, alpha, beta, ax, bx float64) float64 {
 	ab_diff := ax - bx
 	ab_diff_squared := math.Pow(ab_diff, 2)
 	ab_sum := alpha + beta

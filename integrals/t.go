@@ -2,7 +2,7 @@ package integrals
 
 import "math"
 
-func T_ij(i, j int8, alpha, beta, ax, bx float64) float64 {
+func TIJ(i, j int8, alpha, beta, ax, bx float64) float64 {
 	ab_diff := ax - bx
 	ab_diff_squared := math.Pow(ab_diff, 2)
 	ab_sum := alpha + beta
