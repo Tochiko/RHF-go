@@ -2,6 +2,7 @@ package integrals
 
 import "math"
 
+var PI = math.Pi
 var SQRT_PI = math.Sqrt(math.Pi)
 
 func S_ij(i, j int8, alpha, beta, ax, bx float64) float64 {
