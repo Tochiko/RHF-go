@@ -5,6 +5,7 @@ import (
 	"RHF-go/util"
 	"errors"
 	"fmt"
+	"gonum.org/v1/gonum/mat"
 	"os"
 )
 
@@ -20,21 +21,31 @@ func main() {
 		xyzFilePath := args[arglen-1] // path to xyz file should every time be the last argumetn
 
 		mol := chemical_system.NewMoleculeFromXYZ(xyzFilePath, &basisset, timeLogger)
-		_ = mol.CalcS()
-
-		//fmt.Print(mat.Formatted(S))
+		S := mol.CalcS()
+		fmt.Print(mat.Formatted(S))
 		fmt.Print("\n", "-----------------------------", "\n")
-		_ = mol.CalcT()
-		//fmt.Print(mat.Formatted(T))
+		T := mol.CalcT()
+		fmt.Print(mat.Formatted(T))
+		fmt.Print("\n", "-----------------------------", "\n")
+		VNuc := mol.CalcVNuc()
+		fmt.Print(mat.Formatted(VNuc))
 	}
+
+	/*args := os.Args
+	arglen := len(args)
+	basisset := args[arglen-2] // basisset should every time be the prae-last argument
+	timeLogger := util.NewTimeLogger()
+	h1 := chemical_system.NewAtom("H", [3]float64{1.0, 0.0, 0.0})
+	h2 := chemical_system.NewAtom("H", [3]float64{0.0, 1.0, 0.0})
+	o1 := chemical_system.NewAtom("O", [3]float64{0.0, 0.0, 0.0})
+	mol := chemical_system.NewMolecule([]*chemical_system.Atom{o1, h1, h2}, &basisset, timeLogger)
+	S := mol.CalcS()
+	fmt.Print(mat.Formatted(S))
+	fmt.Print("\n", "-----------------------------", "\n")
+	T := mol.CalcT()
+	fmt.Print(mat.Formatted(T))
+	fmt.Print("\n", "-----------------------------", "\n")
+	VNuc := mol.CalcVNuc()
+	fmt.Print(mat.Formatted(VNuc))*/
+
 }
-
-/*h1 := chemical_system.NewAtom("H", [3]float64{1.0, 0.0, 0.0})
-h2 := chemical_system.NewAtom("H", [3]float64{0.0, 1.0, 0.0})
-o1 := chemical_system.NewAtom("O", [3]float64{0.0, 0.0, 0.0})
-h2o := chemical_system.NewMolecule([]*chemical_system.Atom{o1, h1, h2}, &chemical_system.STO3G)*/
-
-/*h2o := chemical_system.NewMoleculeFromXYZ("./xyzfiles/Water.xyz", &chemical_system.STO3G)
-
-h2o.CalcS()
-fmt.Print(mat.Formatted(h2o.GetS()))*/

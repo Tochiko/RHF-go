@@ -96,3 +96,14 @@ func (cg *Contracted3Gaussian) T(other *Contracted3Gaussian) float64 {
 	}
 	return result
 }
+
+func (cg *Contracted3Gaussian) VNuc(other *Contracted3Gaussian, position [3]float64) float64 {
+	result := 0.
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 3; j++ {
+			result += integrals.V_ij(cg.ijk[0], cg.ijk[1], cg.ijk[2], other.ijk[0], other.ijk[1], other.ijk[2], cg.exps[i], other.exps[j], cg.shift, other.shift, position) *
+				cg.coefs[i] * other.coefs[j] * cg.normconst[i] * other.normconst[j]
+		}
+	}
+	return result
+}

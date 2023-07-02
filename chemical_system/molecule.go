@@ -19,6 +19,7 @@ type Molecule struct {
 	nBasisFunctions int
 	s               *mat.Dense
 	t               *mat.Dense
+	vnuc            *mat.Dense
 }
 
 func NewMolecule(atoms []*Atom, nameBs *string, logger *util.TimeLogger) *Molecule {
@@ -94,7 +95,7 @@ func (m *Molecule) initialize() {
 }
 
 func (m *Molecule) CalcS() *mat.Dense {
-	defer m.logger.LogTimeAfterCompletion("Molecule.CalcS")()
+	defer m.logger.LogTimeAfterCompletion("Molecule.CalcS()")()
 	m.s = mat.NewDense(m.nBasisFunctions, m.nBasisFunctions, nil)
 	for i := 0; i < m.nBasisFunctions; i++ {
 		for j := i; j < m.nBasisFunctions; j++ {
@@ -117,7 +118,7 @@ func (m *Molecule) GetS() *mat.Dense {
 }
 
 func (m *Molecule) CalcT() *mat.Dense {
-	defer m.logger.LogTimeAfterCompletion("Molecule.CalcT")()
+	defer m.logger.LogTimeAfterCompletion("Molecule.CalcT()")()
 	m.t = mat.NewDense(m.nBasisFunctions, m.nBasisFunctions, nil)
 	for i := 0; i < m.nBasisFunctions; i++ {
 		for j := i; j < m.nBasisFunctions; j++ {
@@ -134,4 +135,28 @@ func (m *Molecule) CalcT() *mat.Dense {
 
 func (m *Molecule) GetT() *mat.Dense {
 	return m.t
+}
+
+func (m *Molecule) CalcVNuc() *mat.Dense {
+	defer m.logger.LogTimeAfterCompletion("Molecule.CalcVNuc()")()
+	m.vnuc = mat.NewDense(m.nBasisFunctions, m.nBasisFunctions, nil)
+	for i := 0; i < m.nBasisFunctions; i++ {
+		for j := i; j < m.nBasisFunctions; j++ {
+			m.vnuc.Set(i, j, m.calcVNucIJ(i, j))
+			m.vnuc.Set(j, i, m.vnuc.At(i, j))
+		}
+	}
+	return m.vnuc
+}
+
+func (m *Molecule) calcVNucIJ(i, j int) float64 {
+	result := 0.
+	for _, at := range m.atoms {
+		result -= float64(at.data.atnum) * m.aoBasis[i].VNuc(m.aoBasis[j], at.coord)
+	}
+	return result
+}
+
+func (m *Molecule) GetVNuc() *mat.Dense {
+	return m.vnuc
 }

@@ -12,15 +12,14 @@ func boys(n, t float64) float64 {
 	return special.HypPFQ([]float64{n + 0.5}, []float64{n + 1.5}, -t) / (2.0*n + 1.0)
 }
 
-func v_ij(i, j, k, l, m, n int8, alpha, beta float64, Aa, Bb, Cc []float64) float64 {
-	A := mat.NewVecDense(3, Aa)
-	B := mat.NewVecDense(3, Bb)
-	C := mat.NewVecDense(3, Cc)
-	var AB *mat.VecDense
-	var alphaA *mat.VecDense
-	//alphaA.CopyVec(A)
-	var betaB *mat.VecDense
-	//betaB.CopyVec(B)
+func V_ij(i, j, k, l, m, n int8, alpha, beta float64, Aa, Bb, Cc [3]float64) float64 {
+	A := mat.NewVecDense(3, Aa[:])
+	B := mat.NewVecDense(3, Bb[:])
+	C := mat.NewVecDense(3, Cc[:])
+	AB := mat.NewVecDense(3, make([]float64, 3))
+	alphaA := mat.NewVecDense(3, make([]float64, 3))
+	betaB := mat.NewVecDense(3, make([]float64, 3))
+
 	AB.SubVec(A, B)
 	r_AB := mat.Dot(AB, AB)
 	alphaA.ScaleVec(alpha, A)
@@ -29,11 +28,12 @@ func v_ij(i, j, k, l, m, n int8, alpha, beta float64, Aa, Bb, Cc []float64) floa
 	p := alpha + beta
 	q := alpha * beta
 
-	var Pp *mat.VecDense
+	Pp := mat.NewVecDense(3, make([]float64, 3))
+	P := mat.NewVecDense(3, make([]float64, 3))
+	PC := mat.NewVecDense(3, make([]float64, 3))
 	Pp.AddVec(alphaA, betaB)
-	var P *mat.VecDense
+
 	P.ScaleVec(1/p, Pp)
-	var PC *mat.VecDense
 	PC.SubVec(P, C)
 	p_RPC := p * mat.Dot(PC, PC)
 
